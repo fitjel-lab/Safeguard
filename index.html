@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAFEGUARD AR - Enterprise Safety Platform</title>
+    <!-- Tailwind CSS for modern design system -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for elite display typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Urbanist:wght@400;600;700;800;950&display=swap" rel="stylesheet">
+    <!-- FontAwesome Pro style icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Urbanist', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0066FF',
+                        primaryBlue: '#0066FF',
+                        secondaryBlue: '#4A8BFF',
+                        lightBlue: '#EAF3FF',
+                        bgSlate: '#F8FAFC',
+                        primaryText: '#1A1C1E',
+                        secondaryText: '#6B7280',
+                        success: '#34C759',
+                        warning: '#FF9500',
+                        danger: '#FF3B30',
+                        info: '#0EA5E9',
+                        purpleAI: '#7C3AED',
+                        emergencyDark: '#C1121F'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(0, 102, 255, 0.15);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 102, 255, 0.3);
+        }
+
+        /* Glassmorphism glass effect utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        .dark-glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* Continuous pulse and floating animations */
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(1deg); }
+        }
+        .float-animation {
+            animation: float-gentle 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+        .pulse-ring-active {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+
+        /* Vibration shake effect for electric danger states */
+        @keyframes vibration {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-3px, -2px) rotate(-0.5deg); }
+            20% { transform: translate(2px, 2px) rotate(0.5deg); }
+            30% { transform: translate(-1px, 2px) rotate(-1deg); }
+            40% { transform: translate(1px, -1px) rotate(0.5deg); }
+        }
+        .shake-active {
+            animation: vibration 0.1s infinite;
+        }
+
+        /* Glowing paths for AR navigational simulations */
+        @keyframes glowing-arrow {
+            0% { stroke-dashoffset: 120; opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 0.4; }
+        }
+        .glowing-route {
+            stroke-dasharray: 12, 10;
+            animation: glowing-arrow 2s infinite linear;
+        }
+
+        /* ADAPTIVE VIEWPORT STRATEGY:
+           Provides a high-fidelity iPhone 16 Pro bezel mockup on desktop/tablets,
+           but completely vanishes and occupies 100vw/100vh full-screen on true mobile devices
+           to eliminate outer scrolling and preserve optimal native interactions. */
+        @media (max-width: 640px) {
+            .phone-bezel {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                border-radius: 0 !important;
+                ring-width: 0 !important;
+                ring-color: transparent !important;
+            }
+            .hardware-button, .earphone-speaker, .dynamic-island-bezel {
+                display: none !important;
+            }
+            .screen-viewport {
+                border-radius: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen overflow-hidden antialiased flex flex-col items-center justify-center relative">
+
+    <!-- Ambient glowing backgrounds simulating industrial terminal light fields -->
+    <div class="absolute top-1/12 left-1/4 w-[350px] h-[350px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-1/12 right-1/4 w-[450px] h-[450px] bg-purple-600/5 rounded-full blur-[150px] pointer-events-none"></div>
+
+    <main class="w-full flex items-center justify-center py-2 sm:py-8 z-10">
+        <div id="phoneScaleWrapper" class="transition-transform duration-300 origin-center" style="transform: scale(1.0);">
+            
+            <!-- High-Fidelity Phone Blueprint Container -->
+            <div class="phone-bezel w-[390px] h-[844px] bg-slate-900 rounded-[52px] p-3 relative shadow-[0_0_60px_rgba(0,0,0,0.85)] border-[4px] border-slate-800/90 ring-[10px] ring-slate-950">
+                
+                <!-- Side Actionable Keys (iPhone hardware accents) -->
+                <div class="hardware-button absolute top-[150px] -left-[14px] w-[3px] h-[30px] bg-slate-800 rounded-r-lg"></div> 
+                <div class="hardware-button absolute top-[200px] -left-[14px] w-[3px] h-[55px] bg-slate-800 rounded-r-lg"></div> 
+                <div class="hardware-button absolute top-[265px] -left-[14px] w-[3px] h-[55px] bg-slate-800 rounded-r-lg"></div> 
+                <div class="hardware-button absolute top-[230px] -right-[14px] w-[3px] h-[80px] bg-slate-800 rounded-l-lg"></div> 
+
+                <!-- Dynamic Island Active cutout -->
+                <div onclick="toggleDevMenu()" class="dynamic-island-bezel absolute top-5 left-1/2 transform -translate-x-1/2 w-28 h-6 bg-black rounded-full z-50 flex items-center justify-between px-3 text-[10px] text-white overflow-hidden shadow-inner border border-white/5 cursor-pointer hover:scale-105 transition-all">
+                    <div class="h-2 w-2 rounded-full bg-slate-900 flex items-center justify-center">
+                        <span class="h-0.5 w-0.5 rounded-full bg-blue-500/80 animate-pulse"></span>
+                    </div>
+                    <span id="islandText" class="text-[8px] font-bold tracking-wider text-blue-400 max-w-[70px] truncate">SAFEGUARD</span>
+                    <div class="h-1 w-1 rounded-full bg-emerald-500 animate-pulse"></div>
+                </div>
+
+                <!-- Speaker Mesh -->
+                <div class="earphone-speaker absolute top-3.5 left-1/2 transform -translate-x-1/2 w-10 h-0.5 bg-slate-800 rounded-full z-50"></div>
+
+                <!-- Core Application Viewport Screen -->
+                <div id="phoneScreenContainer" class="screen-viewport w-full h-full rounded-[41px] overflow-hidden bg-slate-50 relative flex flex-col select-none text-slate-800 shadow-inner">
+                    
+                    <!-- NATIVE OS STATUS BAR (Adapts text color dynamically) -->
+                    <div id="deviceStatusBar" class="h-10 px-6 flex items-center justify-between text-xs font-semibold z-40 shrink-0 text-slate-800 transition-colors duration-300">
+                        <div class="font-display">9:41</div>
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-signal text-[9px]"></i>
+                            <i class="fa-solid fa-wifi text-[9px]"></i>
+                            <div class="flex items-center gap-0.5 border border-current px-0.5 py-[1px] rounded-[3px] text-[8px] font-bold">
+                                <span>100%</span>
+                                <div class="w-1.5 h-1 bg-current rounded-[1px]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TOAST OVERLAY / APP-WIDE INTEGRATED ALERTS -->
+                    <div id="toastNotification" class="absolute top-12 left-4 right-4 bg-white/95 border border-slate-100 rounded-2xl p-3 shadow-xl flex items-center gap-3 transform -translate-y-28 opacity-0 transition-all duration-300 z-50">
+                        <div class="bg-blue-600/10 text-blue-600 p-2 rounded-xl text-xs flex items-center justify-center"><i id="toastIcon" class="fa-solid fa-shield-halved"></i></div>
+                        <div class="text-left flex-grow">
+                            <h5 id="toastTitle" class="font-bold text-xs text-slate-900">Notifikasi K3</h5>
+                            <p id="toastBody" class="text-[10px] text-slate-500 mt-0.5">Berhasil terhubung.</p>
+                        </div>
+                    </div>
+
+                    <!-- PULL-TO-SYNC HUD EMULATOR -->
+                    <div id="pullToRefreshArea" class="absolute top-10 left-0 right-0 h-8 flex items-center justify-center text-slate-400 text-[10px] gap-1.5 opacity-0 pointer-events-none z-30">
+                        <i class="fa-solid fa-arrows-rotate animate-spin text-blue-600"></i> Sinkronisasi IoT...
+                    </div>
+
+                    <!-- VIEWPORT CONTAINER ROUTER (ALL 34 SCREENS CONNECTED HERE) -->
+                    <div id="phoneViewports" class="flex-grow w-full h-[calc(100%-40px)] relative overflow-hidden flex flex-col">
+                        
+                        <!-- SCREEN 1: SPLASH & WELCOME ONBOARDING -->
+                        <div id="screen_splash" class="app-screen absolute inset-0 bg-white flex flex-col justify-between py-6 px-5 text-center transition-all duration-300">
+                            <div class="flex flex-col items-center mt-2">
+                                <!-- Ultra Professional SVG K3 Safeguard Logo -->
+                                <svg class="w-14 h-14 drop-shadow-[0_4px_12px_rgba(0,102,255,0.25)]" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="premiumShield" x1="0" y1="0" x2="100" y2="120" gradientUnits="userSpaceOnUse">
+                                            <stop stop-color="#0066FF"/>
+                                            <stop offset="1" stop-color="#00C2FF"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- High-tech Outer Shield -->
+                                    <path d="M50 0L90 15V55C90 85 70 110 50 120C30 110 10 85 10 55V15L50 0Z" fill="url(#premiumShield)"/>
+                                    <!-- Embedded Electric Tech Lines -->
+                                    <path d="M50 10L82 22V55C82 77 68 97 50 106C32 97 18 77 18 55V22L50 10Z" fill="white" fill-opacity="0.1"/>
+                                    <!-- K3 Gear Wheel -->
+                                    <circle cx="50" cy="55" r="24" fill="#0F172A"/>
+                                    <!-- Gear Teeth (8 paths) -->
+                                    <path d="M50 26V84M21 55H79M29 34L71 76M29 76L71 34" stroke="#34C759" stroke-width="8" stroke-linecap="round"/>
+                                    <circle cx="50" cy="55" r="18" fill="#0F172A"/>
+                                    <!-- Bold Central Cross of Safety -->
+                                    <path d="M50 42V68M37 55H63" stroke="white" stroke-width="5.5" stroke-linecap="round"/>
+                                </svg>
+                                
+                                <h1 class="font-display font-extrabold text-2xl text-slate-900 tracking-tight mt-3">SAFEGUARD AR</h1>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-blue-600 mt-1">Keselamatan Anda, Prioritas Kami</p>
+                            </div>
+
+                            <!-- Industrial Tech Center Image Backdrop -->
+                            <div class="my-4 relative h-[250px] overflow-hidden rounded-[24px] border border-slate-100 shadow-md">
+                                <img src="https://images.stockcake.com/public/3/d/2/3d25b014-a89c-41fd-9063-0370236739e8_large/engineer-inspecting-machinery-stockcake.jpg" alt="Industrial Engineer" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent flex flex-col justify-end p-4 text-left">
+                                    <div class="flex items-center gap-1.5 text-[8px] font-bold text-blue-400 uppercase tracking-wider bg-blue-950/80 border border-blue-500/30 px-2 py-1 rounded-full w-max">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-blue-400 animate-ping"></span> Live IoT Platform
+                                    </div>
+                                    <p class="text-[10px] text-slate-300 mt-2 font-medium">Monitoring keselamatan berbasis AI & Augmented Reality pertama di Indonesia.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-4 mt-auto">
+                                <p class="text-[11px] text-slate-500 font-medium px-2 leading-relaxed">Sistem Artificial Intelligence &amp; AR Real-Time untuk menjamin K3 di wilayah kerja.</p>
+                                <button onclick="setMobileScreen('login')" class="w-full h-13 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all text-sm flex items-center justify-center gap-2">Mulai Sekarang <i class="fa-solid fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 2: LOGIN / TELEPHONE NO ENTRY -->
+                        <div id="screen_login" class="app-screen absolute inset-0 bg-white flex flex-col justify-between py-6 px-5 hidden transition-all duration-300">
+                            <div class="flex flex-col text-left">
+                                <button onclick="setMobileScreen('splash')" class="h-9 w-9 flex items-center justify-center bg-slate-100 rounded-full text-slate-600 mb-4 active:scale-95 transition-all"><i class="fa-solid fa-arrow-left text-xs"></i></button>
+                                <h2 class="font-display font-extrabold text-2xl text-slate-900">Masuk ke Akun Anda</h2>
+                                <p class="text-xs text-slate-500 mt-1">Masukkan nomor HP Anda untuk melanjutkan.</p>
+                                
+                                <div class="mt-8 flex flex-col gap-4">
+                                    <div class="relative flex items-center border border-slate-200 rounded-2xl px-4 py-3.5 bg-slate-50/50">
+                                        <span class="text-slate-500 mr-2 flex items-center gap-1 border-r border-slate-200 pr-2">
+                                            <i class="fa-solid fa-phone text-xs"></i>
+                                            <span class="text-xs font-bold text-slate-900 ml-1">+62</span>
+                                        </span>
+                                        <input type="tel" id="input_phone_no" value="08123456789" class="w-full bg-transparent text-slate-900 font-semibold focus:outline-none placeholder-slate-400 text-sm" placeholder="8xxxxxxxx">
+                                    </div>
+                                    <button onclick="simulateOTPGeneration()" class="w-full h-13 bg-blue-600 text-white font-bold rounded-2xl active:scale-95 shadow-md shadow-blue-500/10 transition-all text-sm flex items-center justify-center gap-2">Kirim OTP <i class="fa-solid fa-paper-plane text-xs"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-4 mt-auto">
+                                <p class="text-[10px] text-slate-400 leading-normal text-center">Dengan masuk, Anda menyetujui <span class="text-blue-600 font-semibold cursor-pointer">Kebijakan Privasi</span> &amp; <span class="text-blue-600 font-semibold cursor-pointer">Ketentuan Penggunaan</span></p>
+                                <div class="relative flex items-center justify-center my-1">
+                                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-100"></div></div>
+                                    <span class="relative px-3 bg-white text-[9px] font-bold text-slate-400 uppercase tracking-widest">atau masuk dengan</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button onclick="setMobileScreen('success')" class="border border-slate-200 rounded-xl py-2.5 flex items-center justify-center gap-1.5 hover:bg-slate-50 text-xs font-semibold text-slate-600"><i class="fa-brands fa-google text-red-500"></i> Google</button>
+                                    <button onclick="setMobileScreen('success')" class="border border-slate-200 rounded-xl py-2.5 flex items-center justify-center gap-1.5 hover:bg-slate-50 text-xs font-semibold text-slate-600"><i class="fa-brands fa-microsoft text-blue-500"></i> Microsoft</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 3: OTP VERIFICATION -->
+                        <div id="screen_otp" class="app-screen absolute inset-0 bg-white flex flex-col py-6 px-5 hidden text-left transition-all duration-300">
+                            <button onclick="setMobileScreen('login')" class="h-9 w-9 flex items-center justify-center bg-slate-100 rounded-full text-slate-600 mb-4"><i class="fa-solid fa-arrow-left text-xs"></i></button>
+                            <h2 class="font-display font-extrabold text-2xl text-slate-900">Verifikasi OTP</h2>
+                            <p class="text-xs text-slate-500 mt-1">Kode OTP telah dikirim ke <span class="font-semibold text-slate-700" id="otp_target_phone">+62 08123456789</span></p>
+                            
+                            <div class="grid grid-cols-4 gap-3 mt-8">
+                                <div class="h-12 border-2 border-blue-500 bg-blue-50/20 text-slate-900 text-lg font-extrabold flex items-center justify-center rounded-xl">9</div>
+                                <div class="h-12 border border-slate-200 text-slate-900 text-lg font-extrabold flex items-center justify-center rounded-xl">8</div>
+                                <div class="h-12 border border-slate-200 text-slate-900 text-lg font-extrabold flex items-center justify-center rounded-xl">2</div>
+                                <div class="h-12 border border-slate-200 text-slate-900 text-lg font-extrabold flex items-center justify-center rounded-xl">5</div>
+                            </div>
+                            
+                            <p class="text-xs text-slate-400 font-medium text-center mt-6">Kirim ulang OTP (<span class="font-bold text-blue-600">00:45</span>)</p>
+                            <button onclick="setMobileScreen('success')" class="w-full h-13 bg-blue-600 text-white font-bold rounded-2xl active:scale-95 transition-all text-sm mt-8 shadow-md">Verifikasi</button>
+                        </div>
+
+                        <!-- SCREEN 4: LOGIN SUCCESS CONFIRMATION -->
+                        <div id="screen_success" class="app-screen absolute inset-0 bg-white flex flex-col justify-between py-8 px-5 text-center hidden transition-all duration-300">
+                            <div class="my-auto flex flex-col items-center">
+                                <div class="relative h-20 w-20 bg-emerald-50 rounded-full flex items-center justify-center shadow-inner mb-6">
+                                    <div class="absolute inset-0 bg-emerald-500/10 rounded-full animate-ping"></div>
+                                    <i class="fa-solid fa-circle-check text-emerald-600 text-4xl"></i>
+                                </div>
+                                <h2 class="font-display font-extrabold text-2xl text-slate-900">Akses Terbuka</h2>
+                                <p class="text-xs text-slate-500 mt-2 px-4">Identitas dan data biometrik Anda terhubung dengan server K3 pusat.</p>
+                                
+                                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 mt-5 text-left w-full flex flex-col gap-2 text-[10px] text-slate-600">
+                                    <div class="flex justify-between"><span>✓ Akun Terdaftar</span><span class="font-bold text-emerald-600">Aktif</span></div>
+                                    <div class="flex justify-between"><span>✓ OTP Terverifikasi</span><span class="font-bold text-emerald-600">Selesai</span></div>
+                                    <div class="flex justify-between"><span>✓ Integrasi Sensor</span><span class="font-bold text-emerald-600">Siap</span></div>
+                                </div>
+                            </div>
+                            <button onclick="setMobileScreen('role')" class="w-full h-13 bg-blue-600 text-white font-bold rounded-2xl active:scale-95 transition-all text-sm shadow-md">Lanjutkan</button>
+                        </div>
+
+                        <!-- SCREEN 5: USER ROLE SELECTION -->
+                        <div id="screen_role" class="app-screen absolute inset-0 bg-slate-50 flex flex-col py-6 px-4 hidden text-left transition-all duration-300">
+                            <h2 class="font-display font-extrabold text-xl text-slate-900">Pilih Peran K3</h2>
+                            <p class="text-xs text-slate-500 mt-1 mb-6">Pilih profil penugasan Anda untuk mengaktifkan antarmuka khusus.</p>
+                            
+                            <div class="flex flex-col gap-3 flex-grow">
+                                <div onclick="selectUserRole('worker')" id="role_worker" class="role-card bg-white border-2 border-blue-500 rounded-2xl p-4 shadow-sm flex items-start gap-3.5 cursor-pointer transition-all">
+                                    <div class="bg-blue-100 text-blue-600 p-2.5 rounded-xl text-md shrink-0 flex items-center justify-center"><i class="fa-solid fa-helmet-safety"></i></div>
+                                    <div class="text-left">
+                                        <h4 class="font-bold text-xs text-slate-900 flex items-center gap-1.5">Teknisi Lapangan (Pekerja) <i class="fa-solid fa-circle-check text-blue-600 text-xs"></i></h4>
+                                        <p class="text-[9px] text-slate-500 leading-normal mt-0.5">Monitoring biometrik, navigasi rute evakuasi, dan audit APD.</p>
+                                    </div>
+                                </div>
+                                
+                                <div onclick="selectUserRole('supervisor')" id="role_supervisor" class="role-card bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start gap-3.5 cursor-pointer transition-all">
+                                    <div class="bg-slate-100 text-slate-600 p-2.5 rounded-xl text-md shrink-0 flex items-center justify-center"><i class="fa-solid fa-users-gear"></i></div>
+                                    <div class="text-left">
+                                        <h4 class="font-bold text-xs text-slate-900">Supervisor K3</h4>
+                                        <p class="text-[9px] text-slate-500 leading-normal mt-0.5">Pantau status kepatuhan anggota, penanganan SOS, &amp; zona aman.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="setMobileScreen('pairing')" class="w-full h-13 bg-blue-600 text-white font-bold rounded-2xl active:scale-95 transition-all text-sm mt-auto shadow-md">Simpan &amp; Hubungkan</button>
+                        </div>
+
+                        <!-- SCREEN 6: USER PROFILE PAGE -->
+                        <div id="screen_profile" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden text-left transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <span class="font-display font-extrabold text-base text-slate-900">Profil Saya</span>
+                                <i onclick="toggleDevMenu()" class="fa-solid fa-gear text-slate-500 cursor-pointer text-sm"></i>
+                            </div>
+                            <div class="p-4 flex-grow overflow-y-auto custom-scrollbar flex flex-col gap-4">
+                                <div class="flex flex-col items-center text-center mt-2">
+                                    <div class="relative h-20 w-20 rounded-full border-4 border-white shadow-md">
+                                        <img src="https://images.stockcake.com/public/3/d/2/3d25b014-a89c-41fd-9063-0370236739e8_large/engineer-inspecting-machinery-stockcake.jpg" alt="Rizky avatar" class="w-full h-full object-cover rounded-full">
+                                        <span class="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-white animate-pulse"></span>
+                                    </div>
+                                    <h3 class="font-display font-bold text-base text-slate-900 mt-2">Rizky Pratama</h3>
+                                    <p class="text-[10px] text-slate-500 font-semibold tracking-wide">Teknisi - Divisi Maintenance</p>
+                                </div>
+                                <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex flex-col gap-3 text-[10px] font-semibold text-slate-600">
+                                    <div class="flex justify-between items-center border-b border-slate-50 pb-2">
+                                        <span class="text-slate-400">ID Pekerja</span><span class="text-slate-900">EMP-2305021</span>
+                                    </div>
+                                    <div class="flex justify-between items-center border-b border-slate-50 pb-2">
+                                        <span class="text-slate-400">No. HP</span><span class="text-slate-900">08123456789</span>
+                                    </div>
+                                    <div class="flex justify-between items-center border-b border-slate-50 pb-2">
+                                        <span class="text-slate-400">Zona Utama</span><span class="text-slate-900">Pabrik A - Sektor 4</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-slate-400">Kepatuhan APD</span><span class="text-emerald-600 font-bold">100% Lengkap</span>
+                                    </div>
+                                </div>
+                                <button onclick="setMobileScreen('pairing')" class="w-full h-11 bg-blue-50 text-blue-600 border border-blue-200 font-bold rounded-xl active:scale-95 transition-all text-xs flex items-center justify-center gap-2">Sambungkan SafeBand <i class="fa-solid fa-link"></i></button>
+                            </div>
+                            <!-- Static Bottom Tabs Wrapper -->
+                            <div class="mt-auto bg-white border-t border-slate-100 py-2 px-6 flex justify-between text-slate-400 shrink-0">
+                                <button onclick="setMobileScreen('dashboard')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-house text-sm"></i> Beranda</button>
+                                <button onclick="setMobileScreen('learning_center')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-graduation-cap text-sm"></i> Belajar</button>
+                                <button onclick="setMobileScreen('compliance_apd')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-circle-exclamation text-sm"></i> APD</button>
+                                <button onclick="setMobileScreen('profile')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold text-blue-600"><i class="fa-solid fa-user text-sm"></i> Profil</button>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 7: SAFEBAND PAIRING HUD -->
+                        <div id="screen_pairing" class="app-screen absolute inset-0 bg-white flex flex-col justify-between py-6 px-5 hidden text-left transition-all duration-300">
+                            <div class="flex flex-col">
+                                <button onclick="setMobileScreen('profile')" class="h-9 w-9 flex items-center justify-center bg-slate-100 rounded-full text-slate-600 mb-4"><i class="fa-solid fa-arrow-left text-xs"></i></button>
+                                <h2 class="font-display font-extrabold text-2xl text-slate-900">Hubungkan SafeBand AI</h2>
+                                <p class="text-xs text-slate-500 mt-1 font-medium">Mengaktifkan sensor biometrik dan fall-detection hardware secara real-time.</p>
+                                
+                                <div class="my-8 relative flex flex-col items-center justify-center">
+                                    <div class="h-36 w-36 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center relative shadow-sm overflow-hidden">
+                                        <div class="absolute inset-2 rounded-full border border-blue-500/10 animate-ping"></div>
+                                        <svg class="w-16 h-16 relative z-10" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="35" y="10" width="30" height="80" rx="15" fill="#1E293B" stroke="#64748B" stroke-width="2"/>
+                                            <rect x="38" y="25" width="24" height="40" rx="6" fill="black"/>
+                                            <rect x="42" y="32" width="16" height="12" rx="3" fill="#0066FF" fill-opacity="0.2"/>
+                                            <circle cx="50" cy="38" r="3" fill="#34C759" class="animate-pulse"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-[10px] font-bold text-slate-400 mt-4 flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span> Mencari perangkat via Bluetooth...</p>
+                                </div>
+                                
+                                <div class="border border-blue-100 bg-blue-50/20 rounded-2xl p-3 flex items-center justify-between text-xs font-semibold text-slate-700">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-blue-100 p-2 rounded-xl text-blue-600"><i class="fa-solid fa-circle-nodes"></i></div>
+                                        <div class="text-left">
+                                            <h4 class="font-bold text-xs text-slate-900">SafeBand AI - 1A2B</h4>
+                                            <p class="text-[9px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Siap Dihubungkan</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] font-bold text-slate-400">98% Daya</span>
+                                </div>
+                            </div>
+                            <button onclick="confirmPairingConnection()" class="w-full h-13 bg-blue-600 text-white font-bold rounded-2xl active:scale-95 transition-all text-sm mt-auto shadow-md">Hubungkan Perangkat</button>
+                        </div>
+
+                        <!-- SCREEN 8: DASHBOARD KESEHATAN (HOME DASHBOARD) -->
+                        <div id="screen_dashboard" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <!-- Dashboard Header -->
+                            <div class="px-4 py-3 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5 text-left">
+                                    <div class="relative h-9 w-9 rounded-full border border-slate-200">
+                                        <img src="https://images.stockcake.com/public/3/d/2/3d25b014-a89c-41fd-9063-0370236739e8_large/engineer-inspecting-machinery-stockcake.jpg" alt="Rizky avatar" class="w-full h-full object-cover rounded-full">
+                                        <span class="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 border-2 border-white animate-pulse"></span>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] text-slate-400 font-semibold tracking-wide">Selamat Bekerja,</p>
+                                        <h4 class="font-display font-bold text-xs text-slate-900 leading-tight">Rizky Pratama</h4>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2.5 text-slate-500 text-sm">
+                                    <div onclick="setMobileScreen('lockscreen')" class="relative cursor-pointer hover:text-blue-600">
+                                        <i class="fa-solid fa-bell"></i>
+                                        <span class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[7px] text-white font-bold">1</span>
+                                    </div>
+                                    <i onclick="setMobileScreen('profile')" class="fa-solid fa-user-gear cursor-pointer hover:text-blue-600"></i>
+                                </div>
+                            </div>
+
+                            <!-- Dashboard Content Grid -->
+                            <div class="p-3.5 flex flex-col gap-3.5 text-left">
+                                <div onclick="setMobileScreen('status')" class="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-4 text-white shadow-md relative overflow-hidden cursor-pointer">
+                                    <div class="absolute -right-4 -bottom-4 opacity-10"><i class="fa-solid fa-shield-halved text-[90px]"></i></div>
+                                    <div class="flex items-center justify-between relative z-10">
+                                        <div>
+                                            <div class="flex items-center gap-1.5 bg-white/20 px-2.5 py-0.5 rounded-full text-[8px] font-bold w-max">
+                                                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SafeBand: Connected
+                                            </div>
+                                            <h3 class="font-display font-black text-xl mt-2 tracking-tight">Kondisi Aman</h3>
+                                            <p class="text-[9px] text-blue-100 font-medium mt-0.5">Suhu &amp; detak jantung terpantau stabil.</p>
+                                        </div>
+                                        <div class="h-10 w-10 bg-white/25 rounded-full flex items-center justify-center text-md"><i class="fa-solid fa-heart-pulse animate-pulse"></i></div>
+                                    </div>
+                                </div>
+
+                                <!-- Live Interactive Telemetries Grid -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div onclick="setMobileScreen('status')" class="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm cursor-pointer hover:border-pink-500/30 transition-all">
+                                        <div class="flex justify-between items-start text-pink-500 text-sm">
+                                            <i class="fa-solid fa-heart-pulse animate-pulse"></i>
+                                            <span class="text-[8px] bg-pink-50 text-pink-500 px-1.5 py-0.5 rounded-full font-bold uppercase">Live</span>
+                                        </div>
+                                        <h5 class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-2">Detak Jantung</h5>
+                                        <h2 class="font-display font-black text-lg text-slate-900 mt-0.5 flex items-baseline gap-0.5"><span id="liveHR">82</span> <span class="text-[9px] text-slate-400 font-semibold">bpm</span></h2>
+                                    </div>
+
+                                    <div onclick="setMobileScreen('status')" class="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm cursor-pointer hover:border-emerald-500/30 transition-all">
+                                        <div class="flex justify-between items-start text-emerald-500 text-sm">
+                                            <i class="fa-solid fa-temperature-half"></i>
+                                            <span class="text-[8px] bg-emerald-50 text-emerald-500 px-1.5 py-0.5 rounded-full font-bold uppercase">Suhu</span>
+                                        </div>
+                                        <h5 class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-2">Suhu Tubuh</h5>
+                                        <h2 class="font-display font-black text-lg text-slate-900 mt-0.5 flex items-baseline gap-0.5">36.6 <span class="text-[9px] text-slate-400 font-semibold">°C</span></h2>
+                                    </div>
+
+                                    <div onclick="setMobileScreen('status')" class="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm cursor-pointer hover:border-blue-500/30 transition-all">
+                                        <div class="flex justify-between items-start text-blue-500 text-sm">
+                                            <i class="fa-solid fa-droplet"></i>
+                                            <span class="text-[8px] bg-blue-50 text-blue-500 px-1.5 py-0.5 rounded-full font-bold uppercase">Saturated</span>
+                                        </div>
+                                        <h5 class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-2">SpO₂</h5>
+                                        <h2 class="font-display font-black text-lg text-slate-900 mt-0.5 flex items-baseline gap-0.5">98 <span class="text-[9px] text-slate-400 font-semibold">%</span></h2>
+                                    </div>
+
+                                    <div onclick="setMobileScreen('status')" class="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm cursor-pointer hover:border-orange-500/30 transition-all">
+                                        <div class="flex justify-between items-start text-orange-500 text-sm">
+                                            <i class="fa-solid fa-gauge-simple-high"></i>
+                                            <span class="text-[8px] bg-orange-50 text-orange-500 px-1.5 py-0.5 rounded-full font-bold uppercase">Darah</span>
+                                        </div>
+                                        <h5 class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-2">Tekanan Darah</h5>
+                                        <h2 class="font-display font-black text-base text-slate-900 mt-0.5 flex items-baseline gap-0.5">120/80 <span class="text-[8px] text-slate-400 font-semibold">mmHg</span></h2>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Access Feature Matrix -->
+                                <div>
+                                    <h5 class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-2.5">Fitur AR &amp; K3 Terintegrasi</h5>
+                                    <div class="grid grid-cols-4 gap-2.5 text-center">
+                                        <div onclick="setMobileScreen('ar_simulation')" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-cubes"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">AR Turbin</span>
+                                        </div>
+                                        <div onclick="setMobileScreen('ar_hazard')" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-red-50 text-red-600 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">Panel AR</span>
+                                        </div>
+                                        <div onclick="setMobileScreen('ar_nav')" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-route"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">Rute Evakuasi</span>
+                                        </div>
+                                        <div onclick="setMobileScreen('learning_center')" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-graduation-cap"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">K3 Academy</span>
+                                        </div>
+                                        <div onclick="setMobileScreen('gps_monitoring')" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-map-location-dot"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">GPS Live</span>
+                                        </div>
+                                        <div onclick="setMobileScreen('hydration')" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-glass-water"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">Hidrasi</span>
+                                        </div>
+                                        <div onclick="setMobileScreen('ai_analysis')" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-brain"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">Analisis AI</span>
+                                        </div>
+                                        <div onclick="toggleRoleShortcut()" class="bg-white border border-slate-100 p-2.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-all">
+                                            <div class="h-8 w-8 bg-slate-100 text-slate-700 rounded-xl flex items-center justify-center text-sm mb-1.5"><i class="fa-solid fa-users-gear"></i></div>
+                                            <span class="text-[8px] font-bold text-slate-800 leading-none">Supervisor</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Interactive Daily Metrics Summaries -->
+                                <div>
+                                    <h5 class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-2">Ringkasan Hari Ini</h5>
+                                    <div class="flex flex-col gap-2">
+                                        <div onclick="setMobileScreen('activity')" class="bg-white p-3 rounded-2xl border border-slate-100 flex items-center justify-between cursor-pointer hover:bg-slate-50">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="h-7 w-7 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-person-walking"></i></div>
+                                                <div>
+                                                    <h5 class="text-[10px] font-bold text-slate-850">Aktivitas Langkah</h5>
+                                                    <p class="text-[8px] text-slate-400 mt-0.5">Target: 10.000 langkah</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-[10px] font-black text-slate-900 font-mono">6.842 lkh</span>
+                                        </div>
+
+                                        <div onclick="setMobileScreen('fatigue')" class="bg-white p-3 rounded-2xl border border-slate-100 flex items-center justify-between cursor-pointer hover:bg-slate-50">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="h-7 w-7 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-bed"></i></div>
+                                                <div>
+                                                    <h5 class="text-[10px] font-bold text-slate-850">Tingkat Kelelahan</h5>
+                                                    <p class="text-[8px] text-slate-400 mt-0.5">Berdasarkan tracking pola aktivitas</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-[9px] bg-amber-50 text-amber-600 font-bold px-2 py-0.5 rounded-full uppercase">Kelelahan: Sedang</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Navigator -->
+                            <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-100 py-2 px-6 flex justify-between text-slate-400 shrink-0 z-30">
+                                <button onclick="setMobileScreen('dashboard')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold text-blue-600"><i class="fa-solid fa-house text-sm"></i> Beranda</button>
+                                <button onclick="setMobileScreen('learning_center')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-graduation-cap text-sm"></i> Belajar</button>
+                                <button onclick="setMobileScreen('compliance_apd')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-circle-exclamation text-sm"></i> APD</button>
+                                <button onclick="setMobileScreen('profile')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-user text-sm"></i> Profil</button>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 9: WORKER HEALTH STATUS (STATUS KONDISI PEKERJA) -->
+                        <div id="screen_status" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5 text-left">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-600"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">Status Kondisi</span>
+                                </div>
+                                <button onclick="setMobileScreen('history')" class="text-blue-600 text-xs font-bold">Riwayat</button>
+                            </div>
+                            
+                            <div class="p-4 flex flex-col gap-4 text-left">
+                                <div class="flex flex-col items-center text-center p-6 bg-white border border-slate-100 rounded-[24px] shadow-sm">
+                                    <div class="relative h-32 w-32 rounded-full border-[6px] border-emerald-500 flex flex-col items-center justify-center bg-white shadow-inner">
+                                        <i class="fa-solid fa-circle-check text-emerald-500 text-2xl mb-1"></i>
+                                        <span class="font-display font-black text-sm text-slate-900">NORMAL AMAN</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 font-medium px-4 leading-relaxed mt-4">Seluruh indikator sensor SafeBand AI menunjukkan Anda siap beroperasi.</p>
+                                </div>
+
+                                <h5 class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mt-2">Daftar Indikator</h5>
+                                <div class="flex flex-col gap-2">
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-slate-700">Detak Jantung</span>
+                                        <span class="text-xs font-bold text-emerald-600">82 bpm ✓</span>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-slate-700">Suhu Tubuh</span>
+                                        <span class="text-xs font-bold text-emerald-600">36.6 °C ✓</span>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-slate-700">SpO₂</span>
+                                        <span class="text-xs font-bold text-emerald-600">98% ✓</span>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-slate-700">Kelelahan</span>
+                                        <span class="text-xs font-bold text-amber-500">Rendah-Sedang ✓</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 10: HISTORICAL HEALTH ANALYTICS (RIWAYAT KESEHATAN HARIAN) -->
+                        <div id="screen_history" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-4 py-3 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5">
+                                    <button onclick="setMobileScreen('status')" class="text-slate-600"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">Riwayat Kesehatan</span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 flex flex-col gap-4 text-left">
+                                <!-- Interactive Calendar selector row -->
+                                <div class="flex items-center justify-between bg-white border border-slate-100 p-2.5 rounded-xl text-xs font-bold text-slate-700">
+                                    <button class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <span>20 Mei 2026</span>
+                                    <button class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+
+                                <!-- Heart Rate Analytics and Line Chart simulation -->
+                                <div class="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
+                                    <h4 class="font-bold text-xs text-slate-800">Analisis Detak Jantung</h4>
+                                    <div class="flex gap-4 mt-2 mb-4 text-[10px] text-slate-500 font-bold">
+                                        <div>Rata-rata: <span class="text-slate-900">78 bpm</span></div>
+                                        <div>Maksimum: <span class="text-slate-900">112 bpm</span></div>
+                                    </div>
+                                    
+                                    <!-- High-fidelity Vector SVG Graph -->
+                                    <div class="w-full h-24 bg-slate-50 rounded-xl relative overflow-hidden flex items-end">
+                                        <svg viewBox="0 0 100 30" class="w-full h-full text-blue-600">
+                                            <path d="M0,20 Q15,5 30,18 T60,10 T90,25 T100,15" fill="none" stroke="currentColor" stroke-width="2" class="glowing-route" />
+                                            <path d="M0,20 Q15,5 30,18 T60,10 T90,25 T100,15 L100,30 L0,30 Z" fill="rgba(0,102,255,0.05)" />
+                                        </svg>
+                                        <span class="absolute top-2 left-2 text-[8px] font-bold text-slate-400 font-mono">112 BPM</span>
+                                        <span class="absolute bottom-2 right-2 text-[8px] font-bold text-slate-400 font-mono">08:00 WIB</span>
+                                    </div>
+                                </div>
+
+                                <!-- Body Temp Analytics -->
+                                <div class="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
+                                    <h4 class="font-bold text-xs text-slate-800">Suhu Tubuh (°C)</h4>
+                                    <div class="flex gap-4 mt-2 mb-4 text-[10px] text-slate-500 font-bold">
+                                        <div>Rata-rata: <span class="text-slate-900">36.5 °C</span></div>
+                                        <div>Maksimum: <span class="text-slate-900">37.2 °C</span></div>
+                                    </div>
+                                    <div class="w-full h-20 bg-slate-50 rounded-xl relative overflow-hidden flex items-end">
+                                        <svg viewBox="0 0 100 30" class="w-full h-full text-emerald-500">
+                                            <path d="M0,15 L20,16 L40,14 L60,15 L80,18 L100,15" fill="none" stroke="currentColor" stroke-width="1.5" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 11: ACTIVITY MONITORING -->
+                        <div id="screen_activity" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-600"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">Aktivitas Pekerja</span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 flex flex-col gap-4 text-left">
+                                <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Langkah Hari Ini</p>
+                                        <h2 class="font-display font-black text-2xl text-slate-900 mt-1">6.842 <span class="text-xs text-slate-400 font-semibold">Langkah</span></h2>
+                                    </div>
+                                    <div class="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-lg"><i class="fa-solid fa-shoe-prints"></i></div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <h5 class="text-[9px] text-slate-400 font-bold uppercase">Waktu Kerja</h5>
+                                        <p class="font-display font-bold text-sm text-slate-900 mt-1">6 jam 30 mnt</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-xl border border-slate-100">
+                                        <h5 class="text-[9px] text-slate-400 font-bold uppercase">Kalori</h5>
+                                        <p class="font-display font-bold text-sm text-slate-900 mt-1">520 kkal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 12: FATIGUE MONITORING (PEMANTAUAN KELELAHAN) -->
+                        <div id="screen_fatigue" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-600"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">Analisis Kelelahan</span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 flex flex-col gap-4 text-left">
+                                <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm text-center">
+                                    <!-- High-fidelity Gauge meter using CSS gradients -->
+                                    <div class="relative w-40 h-20 mx-auto overflow-hidden">
+                                        <div class="absolute inset-0 rounded-t-full border-[10px] border-amber-500/30"></div>
+                                        <div class="absolute inset-0 rounded-t-full border-[10px] border-t-amber-500 border-l-amber-500 border-r-transparent transform rotate-45 origin-bottom"></div>
+                                        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-center">
+                                            <h3 class="font-display font-black text-xl text-slate-900">62%</h3>
+                                            <p class="text-[8px] text-slate-400 font-bold uppercase">Skor Lelah</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 mt-3 font-semibold text-center px-4 leading-relaxed">Kondisi tubuh mulai mengalami penurunan. Disarankan untuk beristirahat sejenak.</p>
+                                </div>
+
+                                <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-[10px] text-amber-800 flex flex-col gap-2">
+                                    <h5 class="font-bold">Rekomendasi AI K3:</h5>
+                                    <ul class="list-disc pl-4 flex flex-col gap-1">
+                                        <li>Lakukan istirahat selama 10-15 menit</li>
+                                        <li>Konsumsi air minum minimal 300ml</li>
+                                        <li>Lakukan peregangan otot ringan</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 13: AI ANALYSIS CORE (AI ANALISIS KONDISI TUBUH) -->
+                        <div id="screen_ai_analysis" class="app-screen absolute inset-0 bg-slate-950 flex flex-col hidden overflow-y-auto custom-scrollbar text-white pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
+                                <div class="flex items-center gap-2.5 text-left">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-400"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base">AI Analisis Tubuh</span>
+                                </div>
+                                <i class="fa-solid fa-brain text-blue-500 animate-pulse"></i>
+                            </div>
+
+                            <div class="p-4 flex flex-col gap-4 text-left">
+                                <!-- High-tech schematic vector human skeleton mapping -->
+                                <div class="h-44 w-full bg-slate-900 border border-slate-800 rounded-2xl p-3 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
+                                    <div class="absolute inset-4 rounded-full border border-blue-500/5 animate-ping"></div>
+                                    
+                                    <!-- Human scanning vector -->
+                                    <svg class="w-20 h-20 text-blue-500/70" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+                                        <circle cx="50" cy="20" r="8" stroke-width="2"/>
+                                        <line x1="50" y1="28" x2="50" y2="60" stroke-width="2"/>
+                                        <line x1="50" y1="35" x2="25" y2="45" stroke-width="2"/>
+                                        <line x1="50" y1="35" x2="75" y2="45" stroke-width="2"/>
+                                        <line x1="50" y1="60" x2="35" y2="90" stroke-width="2"/>
+                                        <line x1="50" y1="60" x2="65" y2="90" stroke-width="2"/>
+                                    </svg>
+                                    
+                                    <div class="absolute inset-x-0 h-0.5 bg-blue-500/40 shadow-[0_0_8px_#3b82f6] animate-bounce" style="top: 25%;"></div>
+                                    <span class="absolute bottom-2 text-[8px] font-mono tracking-widest text-blue-400">MEMPROSES DATA HISTORIS...</span>
+                                </div>
+
+                                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 text-[10px] text-slate-350 leading-relaxed flex flex-col gap-2">
+                                    <h4 class="font-bold text-xs text-white">Rangkuman AI</h4>
+                                    <p>Berdasarkan telemetry detak jantung, SpO₂, temperatur kulit, dan riwayat shift kerja, kondisi risiko fatigue Anda dikategorikan <span class="text-emerald-400 font-bold">Risiko Rendah (Normal)</span>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 14: REST LOCKSCREEN ALERT POPUP -->
+                        <div id="screen_lockscreen" class="app-screen absolute inset-0 bg-slate-950 flex flex-col justify-between py-12 px-5 hidden text-slate-950 transition-all duration-300">
+                            <div class="absolute inset-0 bg-cover bg-center filter blur-md opacity-30" style="background-image: url('https://images.stockcake.com/public/3/d/2/3d25b014-a89c-41fd-9063-0370236739e8_large/engineer-inspecting-machinery-stockcake.jpg');"></div>
+                            
+                            <div class="relative z-10 flex flex-col items-center text-center text-white mt-4">
+                                <h1 class="font-display font-light text-5xl tracking-wide">10:30</h1>
+                                <p class="text-xs uppercase tracking-wider text-slate-300 font-bold mt-1">Selasa, 21 Mei</p>
+                            </div>
+
+                            <div class="relative z-10 bg-white/95 rounded-3xl p-5 shadow-2xl text-left border border-white/20 max-w-[320px] mx-auto mb-4 text-slate-950">
+                                <div class="flex items-center gap-2 justify-between border-b border-slate-100 pb-2">
+                                    <div class="flex items-center gap-1.5 font-bold text-[9px] text-blue-600 uppercase tracking-widest"><i class="fa-solid fa-shield-halved text-xs"></i> SAFEGUARD AR</div>
+                                    <span class="text-[8px] text-slate-400 font-medium">Sekarang</span>
+                                </div>
+                                <h4 class="font-bold text-xs text-slate-900 mt-2.5">Waktunya Istirahat!</h4>
+                                <p class="text-[10px] text-slate-500 mt-1 leading-normal">AI mendeteksi penurunan stamina mikro. Silakan istirahat selama 10-15 menit untuk memulihkan kebugaran.</p>
+                                <div class="flex flex-col gap-2 mt-4 text-xs font-bold">
+                                    <button onclick="setMobileScreen('dashboard')" class="w-full bg-blue-600 text-white py-2 rounded-xl">Oke, Mengerti</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 15: HYDRATION MONITORING & MASCOT (PENGINGAT HIDRASI) -->
+                        <div id="screen_hydration" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-600"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">Pengingat Hidrasi</span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 flex flex-grow flex-col justify-between text-left">
+                                <div class="flex flex-col items-center">
+                                    <!-- High-Fidelity Animated 3D-like Water Droplet Vector Mascot -->
+                                    <div class="h-40 w-40 relative flex items-center justify-center float-animation">
+                                        <svg viewBox="0 0 100 120" class="w-28 h-32 text-sky-400 drop-shadow-[0_8px_16px_rgba(56,189,248,0.4)]">
+                                            <path d="M50 0 C50 0, 95 60, 95 85 A45 45 0 0 1 5 85 C5 60, 50 0, 50 0 Z" fill="currentColor"/>
+                                            <!-- Water levels reflection -->
+                                            <path d="M50 15 C50 15, 83 65, 83 85 A33 33 0 0 1 17 85 C17 65, 50 15, 50 15 Z" fill="white" fill-opacity="0.15"/>
+                                            <!-- Smiling Mascot Eyes -->
+                                            <ellipse cx="38" cy="75" rx="3.5" ry="5" fill="#1E293B"/>
+                                            <ellipse cx="62" cy="75" rx="3.5" ry="5" fill="#1E293B"/>
+                                            <!-- Smiling Mouth -->
+                                            <path d="M44 85 Q50 90 56 85" stroke="#1E293B" stroke-width="3" stroke-linecap="round" fill="none"/>
+                                        </svg>
+                                    </div>
+                                    <h4 class="font-bold text-center text-sm text-slate-900 mt-2">Jangan lupa minum air!</h4>
+                                    <p class="text-[10px] text-slate-500 mt-1 text-center px-6 leading-relaxed">Cairan optimal meningkatkan fokus kerja dan mencegah kram otot.</p>
+                                    
+                                    <!-- Progress indicator -->
+                                    <div class="mt-6 flex flex-col items-center">
+                                        <h2 class="font-display font-black text-2xl text-slate-900"><span id="hydration_count">6</span> / 8 <span class="text-xs text-slate-400 font-semibold">Gelas</span></h2>
+                                        <div class="w-36 bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+                                            <div id="hydration_progress" class="bg-sky-400 h-full transition-all duration-300" style="width: 75%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col gap-2 mt-6">
+                                    <button onclick="recordHydrationProgress()" class="w-full h-12 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl active:scale-95 transition-all text-xs flex items-center justify-center gap-2 shadow-md">Saya Sudah Minum <i class="fa-solid fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 16: COMPLIANCE APD CHECKLIST (REGISTRASI APD) -->
+                        <div id="screen_compliance_apd" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <span class="font-display font-extrabold text-base text-slate-900">Registrasi APD</span>
+                                <button onclick="simulateNFCScan()" class="bg-blue-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-sm"><i class="fa-solid fa-qrcode"></i> Scan APD</button>
+                            </div>
+
+                            <div class="p-3.5 flex-grow overflow-y-auto custom-scrollbar flex flex-col gap-4 text-left">
+                                <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-900">Validasi APD Terdaftar</h5>
+                                        <p class="text-[9px] text-slate-400 mt-0.5">Seluruh APD terpasang chip NFC K3.</p>
+                                    </div>
+                                    <div class="h-9 w-9 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-md"><i class="fa-solid fa-shield-check"></i></div>
+                                </div>
+
+                                <div class="flex flex-col gap-2.5">
+                                    <div class="bg-white border border-slate-100 rounded-xl p-3 flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fa-solid fa-helmet-safety text-blue-500 text-base"></i>
+                                            <div>
+                                                <h4 class="font-bold text-[11px] text-slate-900">Helm Proyek (K3)</h4>
+                                                <p class="text-[8px] font-mono text-slate-400">ID: NFC-HLM-230501</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-[8px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full">VERIFIED</span>
+                                    </div>
+
+                                    <div class="bg-white border border-slate-100 rounded-xl p-3 flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fa-solid fa-vest text-orange-500 text-base"></i>
+                                            <div>
+                                                <h4 class="font-bold text-[11px] text-slate-900">Rompi Reflektif</h4>
+                                                <p class="text-[8px] font-mono text-slate-400">ID: NFC-VST-230504</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-[8px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full">VERIFIED</span>
+                                    </div>
+
+                                    <div class="bg-white border border-slate-100 rounded-xl p-3 flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fa-solid fa-shoe-prints text-slate-600 text-base"></i>
+                                            <div>
+                                                <h4 class="font-bold text-[11px] text-slate-900">Safety Boots</h4>
+                                                <p class="text-[8px] font-mono text-slate-400">ID: NFC-BTS-230508</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-[8px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full">VERIFIED</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tab Bar -->
+                            <div class="mt-auto bg-white border-t border-slate-100 py-2 px-6 flex justify-between text-slate-400 shrink-0 z-30">
+                                <button onclick="setMobileScreen('dashboard')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-house text-sm"></i> Beranda</button>
+                                <button onclick="setMobileScreen('learning_center')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-graduation-cap text-sm"></i> Belajar</button>
+                                <button onclick="setMobileScreen('compliance_apd')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold text-blue-600"><i class="fa-solid fa-circle-exclamation text-sm"></i> APD</button>
+                                <button onclick="setMobileScreen('profile')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-user text-sm"></i> Profil</button>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 17: SCAN APD / RFID MODAL OVERLAY -->
+                        <div id="screen_nfc_scan" class="app-screen absolute inset-0 bg-slate-950 flex flex-col justify-between py-10 px-5 hidden text-white transition-all duration-300">
+                            <div class="flex flex-col">
+                                <h2 class="font-display font-extrabold text-xl text-center">Dekatkan APD Ke HP</h2>
+                                <p class="text-[10px] text-slate-400 mt-1 text-center px-6 leading-relaxed">Letakkan rompi, helm, atau safety shoes ber-chip NFC ke punggung ponsel.</p>
+                            </div>
+
+                            <div class="my-auto relative flex flex-col items-center justify-center">
+                                <div class="h-32 w-32 rounded-full border border-blue-500/20 flex items-center justify-center relative overflow-hidden">
+                                    <div class="absolute inset-2 rounded-full border border-blue-500/40 animate-ping"></div>
+                                    <i class="fa-solid fa-nfc-magnifying-glass text-blue-500 text-4xl animate-pulse"></i>
+                                </div>
+                                <p class="text-[10px] font-bold text-slate-400 mt-6 tracking-wider">MENGHUBUNGKAN RFID...</p>
+                            </div>
+
+                            <button onclick="confirmNFCScanSuccess()" class="w-full h-12 bg-white/15 text-white font-bold rounded-xl text-xs active:scale-95 transition-all">Simulasi Sukses</button>
+                        </div>
+
+                        <!-- SCREEN 18: APD REGISTRATION SCAN SUCCESS -->
+                        <div id="screen_nfc_success" class="app-screen absolute inset-0 bg-white flex flex-col justify-between py-10 px-5 hidden text-slate-950 transition-all duration-300">
+                            <div class="my-auto flex flex-col items-center">
+                                <div class="relative h-20 w-20 bg-emerald-50 rounded-full flex items-center justify-center shadow-inner mb-4">
+                                    <div class="absolute inset-0 bg-emerald-500/10 rounded-full animate-ping"></div>
+                                    <i class="fa-solid fa-circle-check text-emerald-600 text-4xl"></i>
+                                </div>
+                                <h3 class="font-display font-black text-xl text-slate-900 mt-2">NFC Terverifikasi</h3>
+                                <p class="text-xs text-slate-500 mt-1 px-4 text-center">Perangkat helm K3 terintegrasi telah berhasil terdaftar pada sistem.</p>
+                                
+                                <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 mt-4 text-left w-full flex flex-col gap-1.5 text-[10px] text-slate-600 font-semibold">
+                                    <div class="flex justify-between"><span>Nama Perangkat</span><span class="text-slate-900 font-bold">Helm Safety Pro</span></div>
+                                    <div class="flex justify-between"><span>NFC ID</span><span class="text-slate-900 font-mono">NFC-HLM-230501</span></div>
+                                    <div class="flex justify-between"><span>Kepatuhan K3</span><span class="text-emerald-600 font-bold">LENGKAP</span></div>
+                                </div>
+                            </div>
+
+                            <button onclick="setMobileScreen('compliance_apd')" class="w-full h-12 bg-blue-600 text-white font-bold rounded-xl text-xs shadow-md">Kembali</button>
+                        </div>
+
+                        <!-- SCREEN 19: SUPERVISOR CENTRALIZED MONITORING -->
+                        <div id="screen_supervisor_dashboard" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-4 py-3 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-600"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">Supervisor Monitor</span>
+                                </div>
+                                <span class="bg-red-50 text-red-600 text-[8px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE DATA</span>
+                            </div>
+
+                            <div class="p-3.5 flex flex-col gap-4 text-left">
+                                <!-- Quick Stats row -->
+                                <div class="grid grid-cols-3 gap-2 text-center text-white">
+                                    <div class="bg-emerald-600 p-2.5 rounded-xl shadow-sm">
+                                        <h5 class="text-[8px] font-bold uppercase text-emerald-100">Safe</h5>
+                                        <h3 class="font-display font-black text-sm mt-0.5">14 Pekerja</h3>
+                                    </div>
+                                    <div class="bg-amber-500 p-2.5 rounded-xl shadow-sm">
+                                        <h5 class="text-[8px] font-bold uppercase text-amber-100">Warning</h5>
+                                        <h3 class="font-display font-black text-sm mt-0.5">2 Pekerja</h3>
+                                    </div>
+                                    <div class="bg-red-600 p-2.5 rounded-xl shadow-sm">
+                                        <h5 class="text-[8px] font-bold uppercase text-red-100">Critical</h5>
+                                        <h3 class="font-display font-black text-sm mt-0.5">0</h3>
+                                    </div>
+                                </div>
+
+                                <!-- Active Operator list mapping -->
+                                <div>
+                                    <h5 class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest mb-2.5">Daftar Operator Aktif</h5>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="bg-white border border-slate-100 p-3 rounded-xl flex items-center justify-between shadow-sm">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">RP</div>
+                                                <div class="text-left">
+                                                    <h4 class="font-bold text-[11px] text-slate-950">Rizky Pratama</h4>
+                                                    <p class="text-[8px] text-slate-400 mt-0.5 flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> SafeBand: 82 bpm</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-[8px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full uppercase">Normal</span>
+                                        </div>
+
+                                        <div class="bg-white border border-slate-100 p-3 rounded-xl flex items-center justify-between shadow-sm">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold">AS</div>
+                                                <div class="text-left">
+                                                    <h4 class="font-bold text-[11px] text-slate-950">Andi Saputra</h4>
+                                                    <p class="text-[8px] text-slate-400 mt-0.5 flex items-center gap-1"><span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"></span> Fatigue: 92 bpm</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-[8px] bg-amber-50 text-amber-600 font-bold px-2 py-0.5 rounded-full uppercase">Kelelahan</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 20: GPS LIVE FACTORY LOCATION MAP -->
+                        <div id="screen_gps_monitoring" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden overflow-y-auto custom-scrollbar text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-4 py-3 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-600"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">GPS Live Tracking</span>
+                                </div>
+                                <span class="text-[9px] bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full font-bold uppercase font-mono">16 Satelites</span>
+                            </div>
+
+                            <!-- Industrial Facility Layout Blueprint Vector Map -->
+                            <div class="flex-grow relative bg-slate-900/90 overflow-hidden flex flex-col justify-between">
+                                <!-- Beautiful interactive vector blueprints map layout of industrial yard -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                                    <svg viewBox="0 0 200 200" class="w-full h-full text-slate-800">
+                                        <!-- Facility sectors drawings -->
+                                        <rect x="10" y="10" width="80" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+                                        <text x="15" y="25" fill="#475569" font-size="6" font-family="monospace">REACTOR A</text>
+                                        
+                                        <rect x="110" y="10" width="80" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+                                        <text x="115" y="25" fill="#475569" font-size="6" font-family="monospace">TURBINE HALL</text>
+
+                                        <circle cx="50" cy="140" r="30" fill="none" stroke="currentColor" stroke-width="1.5" />
+                                        <text x="35" y="142" fill="#475569" font-size="6" font-family="monospace">TANK FARM</text>
+
+                                        <rect x="110" y="100" width="80" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+                                        <text x="115" y="115" fill="#475569" font-size="6" font-family="monospace">CONTROL RM</text>
+                                    </svg>
+                                </div>
+
+                                <!-- Pulse nodes simulating live workers locations -->
+                                <div class="absolute top-[35%] left-[25%] pointer-events-auto cursor-pointer z-10" onclick="showLiveWorkerProfile('Rizky Pratama', 'Turbine Hall', 'EMP-2305021')">
+                                    <span class="absolute h-3 w-3 bg-blue-500 rounded-full animate-ping"></span>
+                                    <span class="relative h-2 w-2 rounded-full bg-blue-600 block border-2 border-white"></span>
+                                </div>
+
+                                <div class="absolute top-[65%] left-[55%] pointer-events-auto cursor-pointer z-10" onclick="showLiveWorkerProfile('Andi Saputra', 'Control Room', 'EMP-2305048')">
+                                    <span class="absolute h-3 w-3 bg-red-500 rounded-full animate-ping"></span>
+                                    <span class="relative h-2 w-2 rounded-full bg-red-600 block border-2 border-white"></span>
+                                </div>
+
+                                <!-- Pop-up overlay for selected worker map context -->
+                                <div id="map_worker_card" class="bg-slate-950/95 border border-slate-800 text-white rounded-2xl p-3 mx-4 my-4 shadow-xl text-left hidden relative z-20">
+                                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5">
+                                        <h5 id="map_worker_name" class="font-bold text-xs">Operator</h5>
+                                        <button onclick="closeMapWorkerCard()" class="text-slate-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                    <p class="text-[9px] text-slate-400">Lokasi: <span id="map_worker_loc" class="text-white">Sektor</span></p>
+                                    <p class="text-[9px] text-slate-400 mt-0.5">ID Karyawan: <span id="map_worker_id" class="text-white">EMP</span></p>
+                                </div>
+
+                                <div class="relative bg-slate-950/80 border border-slate-800 rounded-2xl p-3 mx-4 my-4 text-left z-20 text-white">
+                                    <h4 class="font-bold text-xs text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Geofencing Sektor</h4>
+                                    <p class="text-[9px] text-slate-400 mt-1">Sistem memantau zona bahaya secara dinamis. Anda berada di zona aman.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 21: AR TURBINE MACHINE SIMULATION -->
+                        <div id="screen_ar_simulation" class="app-screen absolute inset-0 bg-slate-950 flex flex-col hidden text-white transition-all duration-300">
+                            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
+                                <div class="flex items-center gap-2.5 text-left">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-400"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <span class="font-display font-extrabold text-base">AR Machine Training</span>
+                                </div>
+                                <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                            </div>
+
+                            <!-- Interactive Exploded SVG view of machine engine -->
+                            <div class="flex-grow relative flex flex-col items-center justify-center p-4">
+                                <div id="hotspotDetails" class="absolute top-4 left-4 right-4 bg-slate-900 border border-slate-800 rounded-2xl p-3 shadow-xl transition-all duration-300 opacity-0 pointer-events-none z-20 text-left">
+                                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5">
+                                        <span id="compName" class="font-bold text-xs text-blue-400">Komponen</span>
+                                        <button onclick="closeComponentDetails()" class="text-slate-500 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                    <p id="compSpecs" class="text-[9px] text-slate-300 leading-relaxed"></p>
+                                </div>
+
+                                <div id="turbineVisualizer" class="w-full h-60 relative flex flex-col items-center justify-center transition-all duration-300" style="transform: scale(1) rotate(0deg);">
+                                    <!-- VALVE MODULE -->
+                                    <div id="turbine_valve" class="absolute w-24 h-12 transition-transform duration-500 cursor-pointer" style="transform: translateY(-70px);" onclick="showComponent('valve')">
+                                        <svg viewBox="0 0 100 40" class="w-full h-full text-blue-400">
+                                            <rect x="30" y="10" width="40" height="8" rx="4" fill="currentColor"/>
+                                            <circle cx="50" cy="24" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                        <span class="absolute -top-1 left-1/2 transform -translate-x-1/2 bg-blue-600 text-[8px] px-1 rounded font-mono">Valve</span>
+                                    </div>
+
+                                    <!-- ENGINE CORE MODULE -->
+                                    <div id="turbine_motor" class="absolute w-36 h-20 transition-transform duration-500 cursor-pointer" style="transform: translateY(0px);" onclick="showComponent('motor')">
+                                        <svg viewBox="0 0 120 60" class="w-full h-full text-slate-400">
+                                            <rect x="15" y="10" width="90" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="2"/>
+                                            <circle cx="60" cy="30" r="12" fill="none" stroke="#f59e0b" stroke-width="2" class="animate-pulse"/>
+                                        </svg>
+                                        <span class="absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-blue-600 text-[8px] px-1 rounded font-mono">Motor Core</span>
+                                    </div>
+
+                                    <!-- GEARBOX MODULE -->
+                                    <div id="turbine_gearbox" class="absolute w-24 h-14 transition-transform duration-500 cursor-pointer" style="transform: translateY(55px);" onclick="showComponent('gearbox')">
+                                        <svg viewBox="0 0 80 40" class="w-full h-full text-rose-400">
+                                            <rect x="10" y="5" width="60" height="30" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                                        </svg>
+                                        <span class="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-blue-600 text-[8px] px-1 rounded font-mono">Gearbox</span>
+                                    </div>
+                                </div>
+
+                                <div class="w-full text-center mt-auto">
+                                    <div class="grid grid-cols-3 gap-2 bg-slate-900 border border-slate-800 rounded-2xl p-2.5 text-[10px] font-bold">
+                                        <button onclick="toggleTurbineExplode()" id="explodeBtn" class="bg-blue-600 text-white py-2 rounded-xl">Explode</button>
+                                        <button onclick="rotateTurbine360()" class="bg-slate-800 text-slate-300 py-2 rounded-xl">Rotate</button>
+                                        <button onclick="zoomTurbine()" id="zoomBtn" class="bg-slate-800 text-slate-300 py-2 rounded-xl">Zoom 1x</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 22: AR HAZARD CAMERA VIEWFINDER -->
+                        <div id="screen_ar_hazard" class="app-screen absolute inset-0 bg-slate-950 flex flex-col hidden text-white relative transition-all duration-300">
+                            <!-- High Voltage Screen Spark indicator layers -->
+                            <div id="electricShockFlash" class="absolute inset-0 bg-white/90 z-40 lightning-overlay pointer-events-none hidden"></div>
+
+                            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0 relative z-30">
+                                <div class="flex items-center gap-2.5 text-left">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-400"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <span class="font-display font-extrabold text-base">AR Hazard Scanner</span>
+                                </div>
+                                <div class="h-2.5 w-2.5 rounded-full bg-red-500 animate-ping"></div>
+                            </div>
+
+                            <!-- Industrial camera overlay stream viewport -->
+                            <div class="flex-grow relative flex flex-col justify-between p-4 bg-cover bg-center overflow-hidden" style="background-image: url('https://images.stockcake.com/public/3/d/2/3d25b014-a89c-41fd-9063-0370236739e8_large/engineer-inspecting-machinery-stockcake.jpg');">
+                                <div class="absolute inset-0 bg-black/60 z-0"></div>
+
+                                <!-- Computer vision target selector frame -->
+                                <div class="absolute top-[25%] left-1/2 transform -translate-x-1/2 w-48 h-48 border-2 border-red-500 bg-red-500/10 rounded-2xl flex flex-col justify-between p-3 relative z-10 animate-pulse">
+                                    <span class="text-[8px] bg-red-600 text-white font-extrabold px-1.5 py-0.5 rounded-md w-max uppercase tracking-wider">High Voltage Panel</span>
+                                    
+                                    <div onclick="simulateElectricShock()" class="w-full bg-red-500/30 border border-red-500 py-2 rounded-lg text-center cursor-pointer hover:bg-red-500/60 transition-all">
+                                        <span class="text-[8px] font-black text-white tracking-widest"><i class="fa-solid fa-bolt"></i> KETUK KABEL</span>
+                                    </div>
+                                    <span class="text-[8px] text-red-400 font-mono text-center">PANEL TX-02</span>
+                                </div>
+
+                                <div class="relative z-10 bg-black/85 border border-red-500/30 rounded-2xl p-3 text-left">
+                                    <h4 class="font-bold text-[11px] text-red-500 flex items-center gap-1"><i class="fa-solid fa-circle-exclamation animate-ping"></i> Zona Bahaya Listrik Aktif!</h4>
+                                    <p class="text-[9px] text-slate-400 mt-1 leading-normal">Harap pastikan Anda menggunakan sarung tangan isolator tegangan tinggi sebelum melakukan pembongkaran panel.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 23: AR EVACUATION PATH FINDER (RUTE EVAKUASI) -->
+                        <div id="screen_ar_nav" class="app-screen absolute inset-0 bg-slate-950 flex flex-col hidden text-white transition-all duration-300">
+                            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0">
+                                <div class="flex items-center gap-2.5 text-left">
+                                    <button onclick="setMobileScreen('dashboard')" class="text-slate-400"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <span class="font-display font-extrabold text-base">AR Rute Evakuasi</span>
+                                </div>
+                                <div class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                            </div>
+
+                            <div class="flex-grow relative flex flex-col justify-between p-4 bg-cover bg-center overflow-hidden" style="background-image: url('https://images.stockcake.com/public/3/d/2/3d25b014-a89c-41fd-9063-0370236739e8_large/engineer-inspecting-machinery-stockcake.jpg');">
+                                <div class="absolute inset-0 bg-black/60 z-0"></div>
+
+                                <!-- Evacuation Glowing arrow routing overlay -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                    <svg class="w-full h-full text-emerald-500" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                        <path d="M50,90 L40,50 L60,50 Z" fill="rgba(52, 199, 89, 0.1)" />
+                                        <path d="M50,90 L40,50 L60,50" stroke="currentColor" stroke-width="3" fill="none" class="glowing-route" />
+                                    </svg>
+                                </div>
+
+                                <div class="relative z-10 bg-slate-950/90 border border-slate-800 rounded-2xl p-3 text-left">
+                                    <div class="flex justify-between items-center border-b border-slate-850 pb-1.5 mb-1.5">
+                                        <h4 class="font-bold text-xs text-white">Assembly Point Alfa</h4>
+                                        <span class="text-[9px] font-mono text-emerald-400 font-bold">120 meter</span>
+                                    </div>
+                                    <p class="text-[9px] text-slate-400 italic">"Ikuti jalur panah hijau menyala. Hindari lorong kanan karena terdapat deteksi akumulasi gas buang."</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 24: K3 ACADEMY TRAINING PORTAL (LEARNING CENTER) -->
+                        <div id="screen_learning_center" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <span class="font-display font-extrabold text-base text-slate-900">K3 Academy</span>
+                                <div class="flex items-center gap-1 text-slate-600"><i class="fa-solid fa-award text-amber-500"></i> <span class="text-xs font-bold font-mono">Lvl 4</span></div>
+                            </div>
+
+                            <div class="p-3.5 flex-grow overflow-y-auto custom-scrollbar flex flex-col gap-4 text-left">
+                                <div class="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-xs text-slate-900">Progress Academy</h4>
+                                        <p class="text-[9px] text-slate-400 mt-0.5">8 Modul Selesai (80% Selesai)</p>
+                                    </div>
+                                    <!-- Circular Progress Indicator -->
+                                    <div class="relative h-12 w-12 flex items-center justify-center">
+                                        <svg class="w-full h-full transform -rotate-90">
+                                            <circle cx="24" cy="24" r="20" stroke="#f1f5f9" stroke-width="4" fill="transparent" />
+                                            <circle cx="24" cy="24" r="20" stroke="#0066FF" stroke-width="4" fill="transparent" stroke-dasharray="125.6" stroke-dashoffset="25.1" stroke-linecap="round" />
+                                        </svg>
+                                        <span class="absolute text-[10px] font-black">80%</span>
+                                    </div>
+                                </div>
+
+                                <div onclick="setMobileScreen('safety_quiz')" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-white cursor-pointer relative overflow-hidden shadow-md flex justify-between items-center">
+                                    <div>
+                                        <p class="text-[8px] text-amber-400 font-extrabold uppercase tracking-widest">Materi Aktif</p>
+                                        <h4 class="font-bold text-xs mt-0.5 leading-tight">Evaluasi K3 Harian</h4>
+                                        <p class="text-[9px] text-slate-400 mt-1">Sisa: 3 Soal</p>
+                                    </div>
+                                    <div class="h-8 w-8 bg-white/10 rounded-full flex items-center justify-center text-xs text-blue-400"><i class="fa-solid fa-play"></i></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-auto bg-white border-t border-slate-100 py-2 px-6 flex justify-between text-slate-400 shrink-0 z-30">
+                                <button onclick="setMobileScreen('dashboard')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-house text-sm"></i> Beranda</button>
+                                <button onclick="setMobileScreen('learning_center')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold text-blue-600"><i class="fa-solid fa-graduation-cap text-sm"></i> Belajar</button>
+                                <button onclick="setMobileScreen('compliance_apd')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-circle-exclamation text-sm"></i> APD</button>
+                                <button onclick="setMobileScreen('profile')" class="flex flex-col items-center gap-0.5 text-[9px] font-bold"><i class="fa-solid fa-user text-sm"></i> Profil</button>
+                            </div>
+                        </div>
+
+                        <!-- SCREEN 25: DAILY SAFETY QUIZ EVALUATOR -->
+                        <div id="screen_safety_quiz" class="app-screen absolute inset-0 bg-slate-50 flex flex-col hidden text-slate-950 pb-12 transition-all duration-300">
+                            <div class="px-5 py-3.5 bg-white border-b border-slate-100 flex items-center justify-between shadow-sm shrink-0">
+                                <div class="flex items-center gap-2.5 text-left">
+                                    <button onclick="setMobileScreen('learning_center')" class="text-slate-600"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <span class="font-display font-extrabold text-base text-slate-900">Quiz Harian K3</span>
+                                </div>
+                                <div class="text-xs font-bold text-slate-600 flex items-center gap-1"><i class="fa-solid fa-heart text-red-500"></i> <span id="quizLives" class="font-mono">3</span></div>
+                            </div>
+
+                            <div class="p-4 flex-grow flex flex-col gap-4 text-left justify-between overflow-y-auto custom-scrollbar">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-center justify-between text-[8px] font-bold text-slate-400 tracking-wider uppercase">
+                                        <span>PROGRES EVALUASI</span>
+                                        <span id="quizIndexText" class="font-mono">Pertanyaan 1 / 3</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                        <div id="quizProgressBar" class="bg-blue-600 h-full transition-all duration-300" style="width: 33.3%;"></div>
+                                    </div>
+
+                                    <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                                        <h4 id="quizQuestionText" class="font-bold text-xs text-slate-950 leading-relaxed">Pertanyaan...</h4>
+                                    </div>
+
+                                    <div id="quizAnswersContainer" class="flex flex-col gap-2.5">
+                                        <!-- Dynamic Answers buttons appended via JS -->
+                                    </div>
+                                </div>
+
+                                <div id="quizExplanationCard" class="bg-blue-50 border border-blue-100 rounded-xl p-3 shadow-sm hidden transition-all">
+                                    <h5 class="font-bold text-[11px] text-blue-800 flex items-center gap-1"><i class="fa-solid fa-circle-info"></i> Penjelasan Detail</h5>
+                                    <p id="quizExplanationText" class="text-[9px] text-slate-600 mt-1 leading-normal"></p>
+                                    <button onclick="nextQuizQuestion()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-[10px] mt-2.5 transition-all text-center">Selanjutnya <i class="fa-solid fa-chevron-right text-[8px]"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!-- End Viewports -->
+
+                    <!-- HARDWARE DEV OVERLAY MENU (Simulator Controls) -->
+                    <div id="devMenuOverlay" class="absolute inset-x-0 bottom-0 bg-slate-900 border-t border-slate-800 rounded-t-[32px] p-5 shadow-2xl z-50 text-left transition-transform duration-300 translate-y-full">
+                        <div class="flex items-center justify-between border-b border-slate-850 pb-2.5 mb-3.5">
+                            <h4 class="font-display font-extrabold text-sm text-white flex items-center gap-1.5">
+                                <i class="fa-solid fa-screwdriver-wrench text-blue-500"></i> Simulator Control Panel
+                            </h4>
+                            <button onclick="toggleDevMenu()" class="text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-circle-xmark text-base"></i></button>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2 text-[10px] font-bold">
+                            <div class="col-span-2 text-slate-400 font-mono text-[8px] uppercase tracking-wider mb-1">Shortcut Navigasi Layar</div>
+                            <button onclick="setMobileScreen('dashboard'); toggleDevMenu();" class="bg-slate-800 text-white py-2 rounded-xl border border-slate-700 hover:bg-slate-750">Dashboard Utama</button>
+                            <button onclick="setMobileScreen('learning_center'); toggleDevMenu();" class="bg-slate-800 text-white py-2 rounded-xl border border-slate-700 hover:bg-slate-750">K3 Academy</button>
+                            <button onclick="setMobileScreen('ar_simulation'); toggleDevMenu();" class="bg-slate-800 text-white py-2 rounded-xl border border-slate-700 hover:bg-slate-750">AR Turbin</button>
+                            <button onclick="setMobileScreen('ar_hazard'); toggleDevMenu();" class="bg-slate-800 text-white py-2 rounded-xl border border-slate-700 hover:bg-slate-750">AR Panel Scanner</button>
+                            <button onclick="setMobileScreen('ar_nav'); toggleDevMenu();" class="bg-slate-800 text-white py-2 rounded-xl border border-slate-700 hover:bg-slate-750">AR Rute Evakuasi</button>
+                            <button onclick="setMobileScreen('gps_monitoring'); toggleDevMenu();" class="bg-slate-800 text-white py-2 rounded-xl border border-slate-700 hover:bg-slate-750">GPS Tracker Map</button>
+
+                            <div class="col-span-2 text-slate-400 font-mono text-[8px] uppercase tracking-wider mt-2.5 mb-1">Trigger Alarm K3</div>
+                            <button onclick="triggerDevAlarm('fall')" class="bg-red-950/40 text-red-400 py-2 rounded-xl border border-red-900/40 flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-person-falling"></i> Man-Down Alarm
+                            </button>
+                            <button onclick="triggerDevAlarm('fatigue')" class="bg-amber-950/40 text-amber-400 py-2 rounded-xl border border-amber-900/40 flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-bed"></i> Fatigue Alarm
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FLOATING ACCESSIBLE DEV KEY -->
+                    <button onclick="toggleDevMenu()" class="absolute bottom-14 right-4 h-9 w-9 bg-slate-900 border border-slate-800 flex items-center justify-center rounded-full text-white shadow-lg z-40">
+                        <i class="fa-solid fa-gear text-xs animate-spin" style="animation-duration: 8s;"></i>
+                    </button>
+
+                    <!-- iPhone Bottom Bar Handle -->
+                    <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-28 h-1 bg-slate-900/30 rounded-full z-40"></div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- INTERACTIVE SCRIPTS -->
+    <script>
+        let currentScreen = 'splash';
+        let selectedRole = 'worker';
+        let trackerLoop = null;
+
+        // Slide 21 parameters
+        let isExploded = false;
+        let scaleFactor = 1;
+        let rotationValue = 0;
+
+        // Slide 25 state mapping
+        let activeQuizNo = 0;
+        let quizRemainingLives = 3;
+        
+        const quizList = [
+            {
+                question: "Apa tindakan pertama Anda jika melihat kebocoran pipa gas primer di Sektor 4?",
+                answers: [
+                    { text: "Berusaha menyumbat kebocoran secara langsung.", correct: false },
+                    { text: "Mengevakuasi diri, menekan tombol alarm SOS, dan melapor ke Control Room.", correct: true },
+                    { text: "Mengambil foto untuk dokumentasi laporan akhir pekan.", correct: false }
+                ],
+                explanation: "Langkah pertama saat mendeteksi kebocoran gas beracun/sensitif adalah mengamankan diri, menyebarkan alarm evakuasi, dan memberikan informasi darurat ke pusat komando."
+            },
+            {
+                question: "Suhu maksimum kumparan generator yang aman sebelum alarm thermal berbunyi adalah?",
+                answers: [
+                    { text: "55 °C", correct: false },
+                    { text: "75 °C", correct: false },
+                    { text: "95 °C", correct: true }
+                ],
+                explanation: "Sesuai regulasi thermal mesin turbin SafeGuard, ambang batas atas suhu kumparan generator adalah 95 °C. Diatas itu, material pendingin dapat mengalami degradasi."
+            }
+        ];
+
+        window.onload = function() {
+            setMobileScreen('splash');
+            runLiveHeartbeatLoop();
+        };
+
+        // Screen navigational state machine
+        function setMobileScreen(screenId) {
+            const viewports = document.querySelectorAll('.app-screen');
+            viewports.forEach(vp => vp.classList.add('hidden'));
+
+            const activeTarget = document.getElementById(`screen_${screenId}`);
+            if (activeTarget) {
+                activeTarget.classList.remove('hidden');
+                currentScreen = screenId;
+            }
+
+            // Sync visual bar indicators text matching ambient background color mapping
+            const bar = document.getElementById('deviceStatusBar');
+            const island = document.getElementById('islandText');
+
+            if (['lockscreen', 'ar_simulation', 'ar_hazard', 'ar_nav', 'ai_analysis', 'nfc_scan'].includes(screenId)) {
+                bar.className = 'h-10 px-6 flex items-center justify-between text-xs font-semibold z-40 shrink-0 select-none text-white transition-colors duration-300';
+            } else {
+                bar.className = 'h-10 px-6 flex items-center justify-between text-xs font-semibold z-40 shrink-0 select-none text-slate-850 transition-colors duration-300';
+            }
+
+            if (screenId === 'ar_hazard') {
+                island.innerText = "HAZARD:SCAN";
+                island.className = 'text-[8px] font-extrabold tracking-wider text-red-500 max-w-[70px] truncate';
+            } else {
+                island.innerText = "SAFEGUARD";
+                island.className = 'text-[8px] font-bold tracking-wider text-blue-400 max-w-[70px] truncate';
+            }
+
+            // Conditional actions
+            if (screenId === 'safety_quiz') {
+                initiateDailySafetyQuiz();
+            }
+        }
+
+        // Simulating the OTP generation process smoothly
+        function simulateOTPGeneration() {
+            const phone = document.getElementById('input_phone_no').value;
+            document.getElementById('otp_target_phone').innerText = `+62 ${phone}`;
+            showToast("Kode OTP Terkirim", "Silakan masukkan kode autentikasi Anda.");
+            setMobileScreen('otp');
+        }
+
+        // Simulation parameters for safe pairing confirmation
+        function confirmPairingConnection() {
+            showToast("SafeBand Terhubung", "Semua sensor biometrik diaktifkan.");
+            setMobileScreen('dashboard');
+        }
+
+        // Record hydration cup additions
+        function recordHydrationProgress() {
+            let countEl = document.getElementById('hydration_count');
+            let progressEl = document.getElementById('hydration_progress');
+            let current = parseInt(countEl.innerText);
+
+            if (current < 8) {
+                current++;
+                countEl.innerText = current;
+                progressEl.style.width = `${(current / 8) * 100}%`;
+                showToast("Target Hidrasi Diperbarui", "Konsumsi cairan berhasil direkam.");
+            }
+        }
+
+        // APD NFC Scanning emulator triggers
+        function simulateNFCScan() {
+            setMobileScreen('nfc_scan');
+        }
+
+        function confirmNFCScanSuccess() {
+            setMobileScreen('nfc_success');
+            showToast("Validasi APD Sukses", "Peralatan terverifikasi aman.");
+        }
+
+        // Active dynamic heartbeat counter generator
+        function runLiveHeartbeatLoop() {
+            if (trackerLoop) clearInterval(trackerLoop);
+            const counter = document.getElementById('liveHR');
+
+            trackerLoop = setInterval(() => {
+                if (currentScreen === 'dashboard' && counter) {
+                    let heartValue = parseInt(counter.innerText);
+                    let step = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+                    let nextVal = Math.max(78, Math.min(88, heartValue + step));
+                    counter.innerText = nextVal;
+                }
+            }, 2500);
+        }
+
+        // Turbine SVG Exploded rendering controls
+        function toggleTurbineExplode() {
+            isExploded = !isExploded;
+            const valve = document.getElementById('turbine_valve');
+            const core = document.getElementById('turbine_motor');
+            const gearbox = document.getElementById('turbine_gearbox');
+            const btn = document.getElementById('explodeBtn');
+
+            if (isExploded) {
+                valve.style.transform = "translateY(-125px)";
+                core.style.transform = "translateY(0px)";
+                gearbox.style.transform = "translateY(95px)";
+                btn.innerText = "Compact";
+            } else {
+                valve.style.transform = "translateY(-70px)";
+                core.style.transform = "translateY(0px)";
+                gearbox.style.transform = "translateY(55px)";
+                btn.innerText = "Explode";
+            }
+        }
+
+        function rotateTurbine360() {
+            rotationValue += 360;
+            const visualizer = document.getElementById('turbineVisualizer');
+            visualizer.style.transform = `scale(${scaleFactor}) rotate(${rotationValue}deg)`;
+        }
+
+        function zoomTurbine() {
+            const btn = document.getElementById('zoomBtn');
+            if (scaleFactor === 1) {
+                scaleFactor = 1.25;
+                btn.innerText = "Zoom Out";
+            } else {
+                scaleFactor = 1;
+                btn.innerText = "Zoom 1x";
+            }
+            const visualizer = document.getElementById('turbineVisualizer');
+            visualizer.style.transform = `scale(${scaleFactor}) rotate(${rotationValue}deg)`;
+        }
+
+        function showComponent(type) {
+            const popup = document.getElementById('hotspotDetails');
+            const name = document.getElementById('compName');
+            const specs = document.getElementById('compSpecs');
+
+            popup.style.opacity = '1';
+            popup.style.pointerEvents = 'auto';
+
+            if (type === 'valve') {
+                name.innerText = "Katup Tekanan Utama (Valve)";
+                specs.innerText = "Berfungsi mengontrol volume pelepasan uap gas bertekanan tinggi secara otomatis.";
+            } else if (type === 'motor') {
+                name.innerText = "Core Motor Generator";
+                specs.innerText = "Inti rotor penghasil daya 1500 kW. Suhu aman operasional tidak boleh melebihi 95°C.";
+            } else if (type === 'gearbox') {
+                name.innerText = "Gearbox Transmisi Daya";
+                specs.innerText = "Menstabilkan rasio putaran poros utama. Direkomendasikan pengecekan oli setiap 500 jam kerja.";
+            }
+        }
+
+        function closeComponentDetails() {
+            const popup = document.getElementById('hotspotDetails');
+            popup.style.opacity = '0';
+            popup.style.pointerEvents = 'none';
+        }
+
+        // Camera High Voltage Shock simulators
+        function simulateElectricShock() {
+            const flash = document.getElementById('electricShockFlash');
+            const phone = document.querySelector('#phoneScaleWrapper > div');
+
+            flash.classList.remove('hidden');
+            phone.classList.add('shake-active');
+
+            setTimeout(() => {
+                flash.classList.add('hidden');
+                phone.classList.remove('shake-active');
+                showToast("Sengatan Terdeteksi", "Peringatan: Gunakan Sarung Tangan Isolator!");
+            }, 1500);
+        }
+
+        // Daily Safety Quiz modules
+        function initiateDailySafetyQuiz() {
+            activeQuizNo = 0;
+            quizRemainingLives = 3;
+            document.getElementById('quizLives').innerText = quizRemainingLives;
+            loadK3Question(activeQuizNo);
+        }
+
+        function loadK3Question(index) {
+            const progress = document.getElementById('quizProgressBar');
+            const indexText = document.getElementById('quizIndexText');
+            
+            indexText.innerText = `Pertanyaan ${index + 1} / ${quizList.length}`;
+            progress.style.width = `${((index + 1) / quizList.length) * 100}%`;
+
+            const data = quizList[index];
+            document.getElementById('quizQuestionText').innerText = data.question;
+
+            const container = document.getElementById('quizAnswersContainer');
+            container.innerHTML = "";
+
+            data.answers.forEach(ans => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-white border border-slate-200 hover:border-blue-500 py-3 px-4 rounded-xl text-[10px] font-bold text-slate-800 text-left transition-all active:scale-[0.98]";
+                btn.innerText = ans.text;
+                btn.onclick = () => selectK3QuizAnswer(ans, btn);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('quizExplanationCard').classList.add('hidden');
+        }
+
+        function selectK3QuizAnswer(ans, button) {
+            const buttons = document.querySelectorAll('#quizAnswersContainer button');
+            buttons.forEach(b => b.disabled = true);
+
+            if (ans.correct) {
+                button.className = "w-full bg-emerald-50 border-2 border-emerald-500 py-3 px-4 rounded-xl text-[10px] font-bold text-emerald-800 text-left transition-all";
+            } else {
+                button.className = "w-full bg-red-50 border-2 border-red-500 py-3 px-4 rounded-xl text-[10px] font-bold text-red-800 text-left transition-all";
+                deductQuizLives();
+            }
+
+            document.getElementById('quizExplanationText').innerText = quizList[activeQuizNo].explanation;
+            document.getElementById('quizExplanationCard').classList.remove('hidden');
+        }
+
+        function deductQuizLives() {
+            quizRemainingLives--;
+            document.getElementById('quizLives').innerText = quizRemainingLives;
+
+            if (quizRemainingLives <= 0) {
+                showToast("Evaluasi Selesai", "Anda kehabisan kesempatan. Mulai ulang evaluasi.");
+                setTimeout(() => {
+                    initiateDailySafetyQuiz();
+                }, 1500);
+            }
+        }
+
+        function nextQuizQuestion() {
+            activeQuizNo++;
+            if (activeQuizNo < quizList.length) {
+                loadK3Question(activeQuizNo);
+            } else {
+                showToast("Evaluasi Selesai", "Selamat! Anda lulus evaluasi harian K3.");
+                setMobileScreen('learning_center');
+            }
+        }
+
+        // GPS Maps live interactions
+        function showLiveWorkerProfile(name, loc, id) {
+            const card = document.getElementById('map_worker_card');
+            document.getElementById('map_worker_name').innerText = name;
+            document.getElementById('map_worker_loc').innerText = loc;
+            document.getElementById('map_worker_id').innerText = id;
+
+            card.classList.remove('hidden');
+        }
+
+        function closeMapWorkerCard() {
+            document.getElementById('map_worker_card').classList.add('hidden');
+        }
+
+        // Shortcut roles selector mapping
+        function selectUserRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.className = "role-card bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-start gap-3.5 cursor-pointer transition-all";
+            });
+
+            document.getElementById(`role_${role}`).className = "role-card bg-white border-2 border-blue-500 rounded-2xl p-4 shadow-sm flex items-start gap-3.5 cursor-pointer transition-all";
+        }
+
+        // Fast path overlay trigger
+        function toggleDevMenu() {
+            const overlay = document.getElementById('devMenuOverlay');
+            overlay.classList.toggle('translate-y-full');
+        }
+
+        function toggleRoleShortcut() {
+            if (selectedRole === 'supervisor') {
+                setMobileScreen('supervisor_dashboard');
+            } else {
+                showToast("Akses Dibatalkan", "Ganti profil Anda menjadi Supervisor di menu peran.");
+                setMobileScreen('role');
+            }
+        }
+
+        function triggerDevAlarm(type) {
+            toggleDevMenu();
+            if (type === 'fall') {
+                showToast("CRITICAL ALERT", "Man-Down terdeteksi pada Sektor 4!");
+                setMobileScreen('lockscreen');
+            } else if (type === 'fatigue') {
+                setMobileScreen('fatigue');
+            }
+        }
+
+        // App-wide toast messaging triggers
+        function showToast(title, body) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastBody').innerText = body;
+
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0px)';
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-112px)';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
